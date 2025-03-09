@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get '/books(/:page)', to: 'book#index', as: 'books'
+
   ActiveAdmin.routes(self)
 
   devise_for :admin_users

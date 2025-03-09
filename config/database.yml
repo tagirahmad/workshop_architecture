@@ -17,6 +17,7 @@ development:
 
 test:
   <<: *default
+  <<: *postgre
   database: library_test
 
 production:
