@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :language do
-    slug { FFaker::Locale.code }
+    slug { FFaker::Locale.unique.code }
   end
 
   factory :invalid_language, parent: :language do

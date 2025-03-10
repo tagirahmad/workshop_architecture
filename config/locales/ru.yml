@@ -48,7 +48,17 @@ ru:
         dative: автору
     errors:
       messages:
+        record_invalid: 'Возникли ошибки: %{errors}'
         blank: обязательно для заполнения
         too_short: слишком коротко
+        taken: "Такое значение уже существует"
       models:
         author: Авторы
+        folder:
+          attributes:
+            name:
+              taken: "Папка с таким названием уже существует"
+        language:
+          attributes:
+            slug:
+              taken: "Язык с таким кодом уже существует"

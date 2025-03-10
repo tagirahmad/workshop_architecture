@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :folder do
-    name { FFaker::Book.genre }
+    name { FFaker::Book.unique.genre }
   end
 
   factory :invalid_folder, parent: :folder do
