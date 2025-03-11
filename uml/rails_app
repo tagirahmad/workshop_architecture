@@ -1,0 +1,23 @@
+@startuml
+
+actor User
+
+participant "Routing" as R
+participant "BooksController" as C
+participant "Business Logic" as BL
+participant "Book Model" as M
+participant "BookResource" as S
+participant "Database" as DB
+
+User -> R : HTTP запрос (GET /books)
+R -> C : Передача запроса
+C -> BL : Получение списка книг
+BL -> M : Запрос книг
+M -> DB : SELECT * FROM books
+DB --> M : Данные книг
+M --> BL : Коллекция книг
+BL --> S : Подготовка данных для сериализации
+S --> C : Сериализованные данные книг
+C -> User : JSON-ответ со списком книг
+
+@enduml
