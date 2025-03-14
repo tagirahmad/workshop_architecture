@@ -24,8 +24,8 @@ class Seeds::SqlDumpLoad
 
   def load_sql_dump
     config = Rails.application.config_for(:database)
-    params = "-h #{config[:host]} -p #{config[:port]} -U #{config[:username]}"
+    params = "-h #{config.dig(:primary, :host)} -p #{config.dig(:primary, :port)} -U #{config.dig(:primary, :username)}"
 
-    `PGPASSWORD=#{config[:password]} psql #{params} #{config[:database]} < #{filename}`
+    `PGPASSWORD=#{config.dig(:primary, :password)} psql #{params} #{config.dig(:primary, :database)} < #{filename}`
   end
 end

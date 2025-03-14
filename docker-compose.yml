@@ -1,11 +1,39 @@
 services:
-  db:
+  # db:
+  #   image: postgres:17
+  #   environment:
+  #     POSTGRES_USER: 'postgres'
+  #     POSTGRES_PASSWORD: 'postgres'
+  #   volumes:
+  #     - db:/var/lib/postgresql/data
+  postgresql_master:
     image: postgres:17
-    environment:
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'postgres'
+    container_name: master
+    restart: always
+    networks:
+      - db-repl
     volumes:
-      - db:/var/lib/postgresql/data
+      - ./db/data/master:/var/lib/postgresql/data
+      - ./db/master/pg_hba.conf:/var/lib/postgresql/pg_hba.conf
+      - ./db/master/init.sql:/docker-entrypoint-initdb.d/init.sql
+    env_file:
+      - ./.env.postgresql
+
+  postgresql_slave:
+    image: postgres:17
+    container_name: slave
+    restart: always
+    networks:
+      - db-repl
+    volumes:
+      - ./db/slave/.pgpass:/var/lib/postgresql/.pgpass
+      - ./db/slave/.pgpass:/root/.pgpass
+      - ./db/data/slave/:/var/lib/postgresql/data
+      - ./db/master/pg_hba.conf:/var/lib/postgresql/pg_hba.conf
+      - ./db/slave/init-slave.sh:/var/lib/postgresql/init-slave.sh
+    env_file:
+      - ./.env.postgresql
+
   web:
     tty: true
     stdin_open: true
@@ -22,16 +50,28 @@ services:
       - .:/rails
       - "$DOCKER_COMPOSE_ARCHIVE_FOLDER:/rails/db/data"
     networks:
-      - default
+      - db-repl
     ports:
-      - "8080:3000"
+      - "8081:3000"
     depends_on:
-      - db
+      - postgresql_master
     environment:
       RAILS_LOG_TO_STDOUT: 'yes'
       PAGER: 'more'
-      POSTGRES_HOST: 'db'
+      POSTGRES_HOST_MASTER: 'postgresql_master'
+      POSTGRES_HOST_SLAVE: 'postgresql_slave'
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'postgres'
-volumes:
-  db:
+
+networks:
+  db-repl:
+    driver: bridge
+    name: db-repl
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.22.0.0/16
+          gateway: 172.22.0.1
+
+# volumes:
+#   db:

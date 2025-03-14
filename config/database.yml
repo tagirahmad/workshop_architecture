@@ -21,6 +21,14 @@ test:
   database: library_test
 
 production:
-  <<: *default
-  <<: *postgre
-  database: library_production
+  primary:
+    <<: *default
+    <<: *postgre
+    host: <%= ENV.fetch('POSTGRES_HOST_MASTER', 'localhost') %>
+    database: library_production
+  primary_replica:
+    <<: *default
+    <<: *postgre
+    host: <%= ENV.fetch('POSTGRES_HOST_SLAVE', 'localhost') %>
+    database: library_production
+    replica: true
