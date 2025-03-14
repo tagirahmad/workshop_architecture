@@ -4,6 +4,8 @@ gem 'rails', '>= 8.0.1'
 gem 'puma', '>= 6.5.0'
 
 gem 'alba'
+gem 'elasticsearch-rails'
+gem 'elasticsearch-model'
 
 # Базы данных
 gem 'pg'
