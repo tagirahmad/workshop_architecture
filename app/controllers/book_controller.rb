@@ -3,7 +3,6 @@ class BookController < ApplicationController
     page = params[:page].to_i
     page = 1 if page < 1
     items_per_page = Settings.app.items_per_page
-    # books = Book.offset((page - 1) * items_per_page).limit(items_per_page)
 
     search_query = { match_all: {} }
     response = Book.__elasticsearch__.search(
@@ -12,9 +11,12 @@ class BookController < ApplicationController
       size: items_per_page
     )
 
-    books = response.records
+    render json: response.to_json
 
-    render json: books.to_json
+    # books = Book.offset((page - 1) * items_per_page).limit(items_per_page)
+    # books = response.records
+    # render json: books.to_json
+
     # render json: BookResource.new(books).serialize
   end
 end
